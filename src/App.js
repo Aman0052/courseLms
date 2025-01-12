@@ -146,13 +146,21 @@ function App() {
         )
       }
 
-      </Route>
-        <Route
-          path="about"
+      // </Route>
+      //   <Route
+      //     path="about"
+      //     element={
+      //       <OpenRoute>
+      //         <About />
+      //       </OpenRoute>
+      //     }
+      //   />
+           <Route
+          path="/about"
           element={
-            <OpenRoute>
+            
               <About />
-            </OpenRoute>
+            
           }
         />
       </Routes>
