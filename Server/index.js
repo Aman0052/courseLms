@@ -23,26 +23,14 @@ dbConnect();
 app.use(express.json());
 app.use(cookieParser());
 
-const allowedOrigins = [
-  'http://localhost:3000',
-  'https://course-lms-beta.vercel.app',
-];
-
 app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true); // Allow requests from allowed origins
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true, // Allow cookies or other credentials
-  })
-);
+	cors({
+	  origin: '*', // Allow all origins
+	  credentials: true,
+	})
+  );
+  
 
-// Preflight Handling
-app.options('*', cors());
 
 // Logging Middleware (Optional, for Debugging)
 app.use((req, res, next) => {
