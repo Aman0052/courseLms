@@ -147,12 +147,20 @@ function App() {
       }
 
       </Route>
-        <Route
+        {/* <Route
           path="about"
           element={
             <OpenRoute>
               <About />
             </OpenRoute>
+          }
+        /> */}
+        <Route
+          path="/about"
+          element={
+            
+              <About />
+            
           }
         />
       </Routes>

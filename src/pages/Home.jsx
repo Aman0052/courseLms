@@ -97,7 +97,7 @@ const Home = () => {
             subheading="Our courses are designed and taught by industry experts who have years of experience in coding and are passionate about sharing their knowledge with you."
             ctabtn1={{
               btnText: "try it yourself",
-              linkto: "/signup",
+              linkto: "https://www.w3schools.com/tryit/",
               active: true,
             }}
             ctabtn2={{
@@ -158,9 +158,9 @@ const Home = () => {
       <div className='w-11/12 mx-auto max-w-maxContent flex-col items-center justify-between gap-8 bg-richblack-900 text-white'>
         <InstructorSection />
 
-        <h2 className='text-center text-3xl md:text-4xl font-semibold mt-10'>
+        {/* <h2 className='text-center text-3xl md:text-4xl font-semibold mt-10'>
           Reviews from Other Learners
-        </h2>
+        </h2> */}
         {/* Review Slider */}
       </div>
 

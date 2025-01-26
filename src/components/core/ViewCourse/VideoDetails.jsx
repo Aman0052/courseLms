@@ -45,9 +45,6 @@ const VideoDetails = () => {
     })();
   }, [courseSectionData, courseEntireData, location.pathname]);
 
-  useEffect(() => {
-    toast.success("Double tap on video for better visibility!!!");
-  }, []);
 
   const handleLectureCompletion = async () => {
     setLoading(true);

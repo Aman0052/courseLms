@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import IconBtn from "../../common/IconBtn";
 import React from "react";
 
@@ -12,9 +12,20 @@ import { RiEditBoxLine } from "react-icons/ri"
 
     return(
     <div>
+      <div className="flex justify-between">
      <h1 className="mb-14 text-3xl font-medium text-richblack-5">
         My Profile
       </h1>
+      <div className="flex md:hidden h-10">
+      <IconBtn
+         text="Home"
+         onclick={() => {
+           navigate("/")
+         }}
+         >
+          </IconBtn>
+          </div>
+      </div>
 
       <div className="flex items-center justify-between rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-8 px-12">
       <div className="flex items-center gap-x-4 flex-wrap sm:flex-nowrap">

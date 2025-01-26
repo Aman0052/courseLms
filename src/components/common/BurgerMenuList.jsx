@@ -16,7 +16,7 @@ const BurgerMenuList = ({ closeMenu,user }) => {
         Home
       </Link>
       <Link
-        to="/catalog/blockchain"
+        to="/catalog/programming"
         className="hover:text-richblack-50 transition duration-300"
         onClick={closeMenu}
       >
