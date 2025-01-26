@@ -1,27 +1,27 @@
-import { useEffect, useState } from "react"
-import {  AiOutlineShoppingCart } from "react-icons/ai"
-import { BsChevronDown } from "react-icons/bs"
-import { useSelector } from "react-redux"
-import { Link, matchPath, useLocation } from "react-router-dom"
+import { useEffect, useState } from "react";
+import { AiOutlineShoppingCart } from "react-icons/ai";
+import { BsChevronDown } from "react-icons/bs";
+import { useSelector } from "react-redux";
+import { Link, matchPath, useLocation } from "react-router-dom";
 
-import logo from "../../assets/Logo/Logo-Full-Light.png"
-import { NavbarLinks } from "../../data/navbar-links"
-import { apiConnector } from "../../services/apiconnector"
-import { categories } from "../../services/apis"
-import { ACCOUNT_TYPE } from "../../utils/constants"
-import ProfileDropdown from "../core/Auth/ProfileDropDown"
+import logo from "../../assets/Logo/Logo-Full-Light.png";
+import { NavbarLinks } from "../../data/navbar-links";
+import { apiConnector } from "../../services/apiconnector";
+import { categories } from "../../services/apis";
+import { ACCOUNT_TYPE } from "../../utils/constants";
+import ProfileDropdown from "../core/Auth/ProfileDropDown";
 import { MdOutlineMenu } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
-import BurgerMenuList from "./BurgerMenuList"
+import BurgerMenuList from "./BurgerMenuList";
 
 function Navbar() {
-  const { token } = useSelector((state) => state.auth)
-  const { user } = useSelector((state) => state.profile)
-  const { totalItems } = useSelector((state) => state.cart)
-  const location = useLocation()
+  const { token } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.profile);
+  const { totalItems } = useSelector((state) => state.cart);
+  const location = useLocation();
 
-  const [subLinks, setSubLinks] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [subLinks, setSubLinks] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -29,23 +29,23 @@ function Navbar() {
   const menuClickHandler = () => setMenuClicked(!menuClicked);
 
   useEffect(() => {
-    ;(async () => {
-      setLoading(true)
+    (async () => {
+      setLoading(true);
       try {
-        const res = await apiConnector("GET", categories.CATEGORIES_API)
-        setSubLinks(res.data.data)
+        const res = await apiConnector("GET", categories.CATEGORIES_API);
+        setSubLinks(res.data.data);
       } catch (error) {
-        console.log("Could not fetch Categories.", error)
+        console.log("Could not fetch Categories.", error);
       }
-      setLoading(false)
-    })()
-  }, [])
+      setLoading(false);
+    })();
+  }, []);
 
   // console.log("sub links", subLinks)
 
   const matchRoute = (route) => {
-    return matchPath({ path: route }, location.pathname)
-  }
+    return matchPath({ path: route }, location.pathname);
+  };
 
   return (
     <div
@@ -61,7 +61,7 @@ function Navbar() {
         {/* Navigation links */}
         <nav className="hidden md:block">
           <ul className="flex gap-x-6 text-richblack-25">
-            {NavbarLinks.map((link, index) => (
+            {NavbarLinks?.map((link, index) => (
               <li key={index}>
                 {link.title === "Catalog" ? (
                   <>
@@ -78,13 +78,15 @@ function Navbar() {
                         <div className="absolute left-[50%] top-0 -z-10 h-6 w-6 translate-x-[80%] translate-y-[-40%] rotate-45 select-none rounded bg-richblack-5"></div>
                         {loading ? (
                           <p className="text-center">Loading...</p>
-                        ) : subLinks.length ? (
+                        ) : subLinks && subLinks.length ? (
                           <>
                             {subLinks
-                              ?.filter(
-                                (subLink) => subLink?.courses?.length > 0
+                              .filter(
+                                (subLink) =>
+                                  Array.isArray(subLink?.courses) &&
+                                  subLink.courses.length > 0
                               )
-                              ?.map((subLink, i) => (
+                              .map((subLink, i) => (
                                 <Link
                                   to={`/catalog/${subLink.name
                                     .split(" ")
@@ -149,24 +151,23 @@ function Navbar() {
           {token !== null && <ProfileDropdown />}
         </div>
 
+        {/* Mobile Menu */}
 
-{/* Mobile Menu */}
-
-       <div className="md:hidden flex ">
-       <div className=" gap-5 flex">
-              {user && user?.accountType !== ACCOUNT_TYPE.INSTRUCTOR && (
-            <Link to="/dashboard/cart" className="relative">
-              <AiOutlineShoppingCart className="text-2xl text-richblack-100" />
-              {totalItems > 0 && (
-                <span className="absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center overflow-hidden rounded-full bg-richblack-600 text-center text-xs font-bold text-yellow-100">
-                  {totalItems}
-                </span>
-              )}
-            </Link>
-          )}
+        <div className="md:hidden flex ">
+          <div className=" gap-5 flex">
+            {user && user?.accountType !== ACCOUNT_TYPE.INSTRUCTOR && (
+              <Link to="/dashboard/cart" className="relative">
+                <AiOutlineShoppingCart className="text-2xl text-richblack-100" />
+                {totalItems > 0 && (
+                  <span className="absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center overflow-hidden rounded-full bg-richblack-600 text-center text-xs font-bold text-yellow-100">
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
+            )}
 
             {token !== null && <ProfileDropdown />}
-              </div>
+          </div>
 
           {menuClicked ? (
             <RxCross2
@@ -184,23 +185,22 @@ function Navbar() {
             ></MdOutlineMenu>
           )}
 
-               {menuClicked && (
-        <div className="fixed left-0 top-[70px] bg-richblack-800/80 backdrop-blur-md w-[100vw] h-full z-50">
-          <div className="w-[90%] mx-auto py-5">
-            <BurgerMenuList closeMenu={() => setMenuClicked(false)} 
-              isLoggedIn={isLoggedIn}
-              user={user}/>
-            <div className="h-[0.5px] bg-black mt-7"></div>
-          </div>
-        </div>
-      )}
-
+          {menuClicked && (
+            <div className="fixed left-0 top-[70px] bg-richblack-800/80 backdrop-blur-md w-[100vw] h-full z-50">
+              <div className="w-[90%] mx-auto py-5">
+                <BurgerMenuList
+                  closeMenu={() => setMenuClicked(false)}
+                  isLoggedIn={isLoggedIn}
+                  user={user}
+                />
+                <div className="h-[0.5px] bg-black mt-7"></div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Navbar
-
-
+export default Navbar;

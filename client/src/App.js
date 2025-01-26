@@ -31,16 +31,16 @@ import Instructor from "./components/core/Dashboard/instructorDashboard/instruct
 // import InstructorChart from "./components/core/Dashboard/instructorDashboard/instructorChart";
 
 function App() {
-  const{user}= useSelector((state)=>state.profile);
-  
+  const { user } = useSelector((state) => state.profile);
+
   return (
     <div className="w-screen min-h-screen bg-richblack-900 flex flex-col font-inter">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
 
-        <Route path="catalog/:catalogName" element={<Catelog/>} />
-        <Route path="courses/:courseId" element={<CourseDetails/>} />
+        <Route path="catalog/:catalogName" element={<Catelog />} />
+        <Route path="courses/:courseId" element={<CourseDetails />} />
 
         <Route
           path="signup"
@@ -78,10 +78,10 @@ function App() {
           <Route path="*" element={<Error />} />
           <Route path="dashboard/my-profile" element={<MyProfile />} />
           <Route path="dashboard/settings" element={<Settings />} />
-           {/* Route only for Instructors */}
-           {user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
+          {/* Route only for Instructors */}
+          {user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
             <>
-              <Route path="dashboard/instructor" element={<Instructor/>} />
+              <Route path="dashboard/instructor" element={<Instructor />} />
               <Route path="dashboard/my-courses" element={<MyCourses />} />
               <Route path="dashboard/add-course" element={<AddCourse />} />
               <Route
@@ -91,27 +91,27 @@ function App() {
             </>
           )}
 
-          {
-        user?.accountType === ACCOUNT_TYPE.STUDENT && (
-          <>
-          <Route path="dashboard/cart" element={<Cart />} />
-          <Route path="dashboard/enrolled-courses" element={<EnrolledCourses />} />
-          </>
-        )
-      }
+          {user?.accountType === ACCOUNT_TYPE.STUDENT && (
+            <>
+              <Route path="dashboard/cart" element={<Cart />} />
+              <Route
+                path="dashboard/enrolled-courses"
+                element={<EnrolledCourses />}
+              />
+            </>
+          )}
 
-{
-        user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
-          <>
-          <Route path="dashboard/add-course" element={<AddCourse />} />
-          <Route path="dashboard/my-courses" element={<MyCourses />} />
-          <Route path="dashboard/edit-course/:courseId" element={<EditCourse />} />
-          </>
-        )
-      }
+          {user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
+            <>
+              <Route path="dashboard/add-course" element={<AddCourse />} />
+              <Route path="dashboard/my-courses" element={<MyCourses />} />
+              <Route
+                path="dashboard/edit-course/:courseId"
+                element={<EditCourse />}
+              />
+            </>
+          )}
         </Route>
-
-        
 
         <Route
           path="verify-email"
@@ -129,24 +129,22 @@ function App() {
             </OpenRoute>
           }
         />
-         <Route element={
-        <PrivateRoute>
-          <ViewCourse />
-        </PrivateRoute>
-      }>
-
-      {
-        user?.accountType === ACCOUNT_TYPE.STUDENT && (
-          <>
-          <Route 
-            path="view-course/:courseId/section/:sectionId/sub-section/:subSectionId"
-           element={<VideoDetails />}
-          />
-          </>
-        )
-      }
-
-      </Route>
+        <Route
+          element={
+            <PrivateRoute>
+              <ViewCourse />
+            </PrivateRoute>
+          }
+        >
+          {user?.accountType === ACCOUNT_TYPE.STUDENT && (
+            <>
+              <Route
+                path="view-course/:courseId/section/:sectionId/sub-section/:subSectionId"
+                element={<VideoDetails />}
+              />
+            </>
+          )}
+        </Route>
         {/* <Route
           path="about"
           element={
@@ -155,14 +153,7 @@ function App() {
             </OpenRoute>
           }
         /> */}
-        <Route
-          path="/about"
-          element={
-            
-              <About />
-            
-          }
-        />
+        <Route path="/about" element={<About />} />
       </Routes>
     </div>
   );
