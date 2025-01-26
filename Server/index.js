@@ -22,12 +22,27 @@ dbConnect();
 //middlewares
 app.use(express.json());
 app.use(cookieParser());
+
+
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://course-lms-beta.vercel.app',
+];
+
 app.use(
-	cors({
-		origin:"http://localhost:3000",
-		credentials:true,
-	})
-)
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        // Allow requests with no origin (e.g., mobile apps or Postman) and allowed origins
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true, // Allow cookies or other credentials
+  })
+);
+
 
 app.use(
 	fileUpload({
