@@ -6,10 +6,9 @@ const profileRoutes = require("./routes/Profile");
 const paymentRoutes = require("./routes/Payments");
 const courseRoutes = require("./routes/Course");
 
-// const dbConnect = require("./config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const {cloudinaryConnect } = require("./config/cloudinary");
+const { cloudinaryConnect } = require("./config/cloudinary");
 const fileUpload = require("express-fileupload");
 const dotenv = require("dotenv");
 const dbConnect = require("./config/database");
@@ -17,12 +16,12 @@ const dbConnect = require("./config/database");
 dotenv.config();
 const PORT = process.env.PORT || 4000;
 
-//database connect
+// Database Connection
 dbConnect();
-//middlewares
+
+// Middlewares
 app.use(express.json());
 app.use(cookieParser());
-
 
 const allowedOrigins = [
   'http://localhost:3000',
@@ -33,8 +32,7 @@ app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin || allowedOrigins.includes(origin)) {
-        // Allow requests with no origin (e.g., mobile apps or Postman) and allowed origins
-        callback(null, true);
+        callback(null, true); // Allow requests from allowed origins
       } else {
         callback(new Error('Not allowed by CORS'));
       }
@@ -43,33 +41,49 @@ app.use(
   })
 );
 
+// Preflight Handling
+app.options('*', cors());
+
+// Logging Middleware (Optional, for Debugging)
+app.use((req, res, next) => {
+  console.log('Request Origin:', req.headers.origin);
+  next();
+});
 
 app.use(
-	fileUpload({
-		useTempFiles:true,
-		tempFileDir:"/tmp",
-	})
-)
-//cloudinary connection
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/tmp",
+  })
+);
+
+// Cloudinary Connection
 cloudinaryConnect();
 
-//routes
+// Routes
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/course", courseRoutes);
 app.use("/api/v1/payment", paymentRoutes);
 
-
-//def route
-
+// Default Route
 app.get("/", (req, res) => {
-	return res.json({
-		success:true,
-		message:'Your server is up and running....'
-	});
+  return res.json({
+    success: true,
+    message: 'Your server is up and running....'
+  });
 });
 
-app.listen(PORT, () => {
-	console.log(`App is running at ${PORT}`)
-})
+// Error Handling Middleware (for CORS and Other Errors)
+app.use((err, req, res, next) => {
+  if (err.message === 'Not allowed by CORS') {
+    return res.status(403).json({ success: false, message: err.message });
+  }
+  console.error(err.stack); // Log other errors for debugging
+  res.status(500).json({ success: false, message: 'Internal Server Error' });
+});
 
+// Start the Server
+app.listen(PORT, () => {
+  console.log(`App is running at ${PORT}`);
+});
