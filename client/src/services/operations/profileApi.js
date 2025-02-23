@@ -63,7 +63,7 @@ export async function getUserEnrolledCourses(token) {
     toast.error("Could Not Get Enrolled Courses");
   }
 
-  // toast.dismiss(toastId);
+   toast.dismiss(toastId);
   return result;
 }
 
