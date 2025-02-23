@@ -16,10 +16,14 @@ const courseRoutes = require("./routes/Course");
 dotenv.config();
 const PORT = process.env.PORT || 4000;
 
-// Database Connection
-dbConnect();
+// Increase the timeout for the server
+const server = express();
+server.timeout = 60000; // 60 seconds
 
-// CORS configuration - MUST be before any routes
+// Database Connection with timeout
+dbConnect()
+
+// CORS configuration
 app.use(cors({
     origin: 'https://course-lms-beta.vercel.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -27,13 +31,24 @@ app.use(cors({
     credentials: true
 }));
 
-// Middlewares
-app.use(express.json());
+// Middlewares with increased limits
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
+
+// Request timeout middleware
+app.use((req, res, next) => {
+    res.setTimeout(30000, () => {
+        res.status(504).send('Request Timeout');
+    });
+    next();
+});
+
 app.use(
     fileUpload({
         useTempFiles: true,
         tempFileDir: "/tmp",
+        limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
     })
 );
 
@@ -46,14 +61,32 @@ app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/course", courseRoutes);
 app.use("/api/v1/payment", paymentRoutes);
 
-// Default Route
-app.get("/", (req, res) => {
-    return res.json({
-        success: true,
-        message: 'Your server is up and running....'
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+        error: process.env.NODE_ENV === 'development' ? err.message : undefined
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`App is running at ${PORT}`);
+// Start server with proper error handling
+const startServer = async () => {
+    try {
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    }
+};
+
+startServer();
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+    process.exit(1);
 });
