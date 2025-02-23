@@ -22,6 +22,7 @@ server.timeout = 60000; // 60 seconds
 
 // Database Connection with timeout
 dbConnect()
+console.log('hii')
 
 // CORS configuration
 app.use(cors({
