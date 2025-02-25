@@ -33,7 +33,7 @@ app.use(cors(corsOptions));
 app.options("*", (req, res) => {
   res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorisation, X-Requested-With, Accept");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorisation, X-Requested-With, Accept, Authorization");
   res.header("Access-Control-Allow-Credentials", "true");
   res.sendStatus(200);
 });
