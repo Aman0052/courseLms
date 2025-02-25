@@ -6,10 +6,17 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
+  "redirects": [
     {
-      "src": "/api/(.*)",
-      "dest": "/index.js"
+      "source": "/",
+      "destination": "/index.js",
+      "statusCode": 307
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/index.js"
     }
   ],
   "headers": [
