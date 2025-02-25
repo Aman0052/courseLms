@@ -1,5 +1,4 @@
 const express = require("express");
-const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
@@ -7,7 +6,7 @@ const dotenv = require("dotenv");
 const { cloudinaryConnect } = require("./config/cloudinary");
 const dbConnect = require("./config/database");
 
-// Route imports
+// Import Routes
 const userRoutes = require("./routes/User");
 const profileRoutes = require("./routes/Profile");
 const paymentRoutes = require("./routes/Payments");
@@ -16,78 +15,73 @@ const courseRoutes = require("./routes/Course");
 dotenv.config();
 const PORT = process.env.PORT || 4000;
 
-// Increase the timeout for the server
-const server = express();
-server.timeout = 60000; // 60 seconds
+// Database Connection
+dbConnect();
 
-// Database Connection with timeout
-dbConnect()
-console.log('hii')
+const app = express();
 
-// CORS configuration
-app.use(cors({
-    origin: 'https://course-lms-beta.vercel.app',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-}));
+const corsOptions = {
+  origin: ["http://localhost:3000", "https://course-lms-beta.vercel.app"], 
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+  allowedHeaders: ["Content-Type", "Authorisation", "X-Requested-With", "Accept","Authorization"], 
+  credentials: true,
+};
 
-// Middlewares with increased limits
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-app.use(cookieParser());
+app.use(cors(corsOptions));
 
-// Request timeout middleware
-app.use((req, res, next) => {
-    res.setTimeout(30000, () => {
-        res.status(504).send('Request Timeout');
-    });
-    next();
+// Ensure Preflight (OPTIONS) Requests Are Handled
+app.options("*", (req, res) => {
+  res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorisation, X-Requested-With, Accept");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.sendStatus(200);
 });
 
+
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+app.use(cookieParser());
 app.use(
-    fileUpload({
-        useTempFiles: true,
-        tempFileDir: "/tmp",
-        limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
-    })
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/tmp",
+    limits: { fileSize: 50 * 1024 * 1024 }, 
+  })
 );
 
-// Cloudinary Connection
 cloudinaryConnect();
 
-// Routes
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/course", courseRoutes);
 app.use("/api/v1/payment", paymentRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-        error: process.env.NODE_ENV === 'development' ? err.message : undefined
-    });
+
+app.use((req, res, next) => {
+  res.setTimeout(30000, () => {
+    res.status(504).json({ success: false, message: "Request Timeout" });
+  });
+  next();
 });
 
-// Start server with proper error handling
-const startServer = async () => {
-    try {
-        app.listen(PORT, () => {
-            console.log(`Server running on port ${PORT}`);
-        });
-    } catch (error) {
-        console.error('Failed to start server:', error);
-        process.exit(1);
-    }
-};
 
-startServer();
+app.use((err, req, res, next) => {
+  console.error("Error:", err.stack);
+  res.status(500).json({
+    success: false,
+    message: "Internal Server Error",
+    error: process.env.NODE_ENV === "development" ? err.message : undefined,
+  });
+});
 
-// Handle uncaught exceptions
-process.on('uncaughtException', (err) => {
-    console.error('Uncaught Exception:', err);
-    process.exit(1);
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
+
+
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+  process.exit(1);
 });
