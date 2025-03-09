@@ -23,7 +23,7 @@ const app = express();
 const corsOptions = {
   origin: ["http://localhost:3000", "https://course-lms-beta.vercel.app"], 
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
-  allowedHeaders: ["Content-Type", "Authorisation", "X-Requested-With", "Accept","Authorization"], 
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"], 
   credentials: true,
 };
 
@@ -33,7 +33,7 @@ app.use(cors(corsOptions));
 app.options("*", (req, res) => {
   res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorisation, X-Requested-With, Accept, Authorization");
+  res.header("Access-Control-Allow-Headers", "Content-Type, X-Requested-With, Accept, Authorization");
   res.header("Access-Control-Allow-Credentials", "true");
   res.sendStatus(200);
 });
